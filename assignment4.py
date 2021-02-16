@@ -119,7 +119,7 @@ y_train, y_test = classarray[train_index], classarray[test_index]
 gnb = GaussianNB()
 gnb.fit(X_train, y_train)
 score = gnb.predict_proba(X_train)[:, 1]
-y_pred = sk.model_selection.cross_val_predict(gnb,X_train , y_train, groups = None, cv = 5,verbose = 2)
+y_pred = sk.model_selection.cross_val_predict(gnb,X_train, y_train, groups = None, cv = 5, verbose = 2)
 confusionmatrix = sk.metrics.confusion_matrix(y_train, y_pred)
 #4621, 179
 # 156, 804
@@ -161,7 +161,7 @@ y_trainnew, y_testnew = classarraynew[train_indexnew], classarraynew[test_indexn
 gnbnew = GaussianNB()
 gnbnew.fit(X_trainnew,y_trainnew)
 scorenew = gnbnew.predict_proba(X_trainnew)[:, 1]
-y_prednew=sk.model_selection.cross_val_predict(gnbnew,X_trainnew , y_trainnew, groups=None, cv=5,verbose=2)
+y_prednew = sk.model_selection.cross_val_predict(gnbnew,X_trainnew, y_trainnew, groups=None, cv=5, verbose=2)
 confusionmatrixnew = sk.metrics.confusion_matrix(y_trainnew, y_prednew)
 #4621, 179
 # 156, 804
