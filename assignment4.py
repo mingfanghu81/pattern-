@@ -110,16 +110,16 @@ print(a)
 #iii
 dataarray = dataupdate.values
 classarray = data.classes.values
-c=sk.model_selection.StratifiedShuffleSplit(n_splits = 1, test_size = 0.2)
+c = sk.model_selection.StratifiedShuffleSplit(n_splits = 1, test_size = 0.2)
 for train_index, test_index in c.split(dataarray, classarray):
     print("TRAIN:", train_index, "TEST:", test_index)
 X_train, X_test = dataarray[train_index], dataarray[test_index]
 y_train, y_test = classarray[train_index], classarray[test_index]
 gnb = GaussianNB()
 gnb.fit(X_train, y_train)
-score=gnb.predict_proba(X_train)[:, 1]
-y_pred=sk.model_selection.cross_val_predict(gnb,X_train , y_train, groups = None, cv = 5,verbose = 2)
-confusionmatrix=sk.metrics.confusion_matrix(y_train, y_pred)
+score = gnb.predict_proba(X_train)[:, 1]
+y_pred = sk.model_selection.cross_val_predict(gnb,X_train , y_train, groups = None, cv = 5,verbose = 2)
+confusionmatrix = sk.metrics.confusion_matrix(y_train, y_pred)
 #4621, 179
 # 156, 804
 TP = confusionmatrix[1,1]
@@ -169,10 +169,7 @@ FPnew = confusionmatrixnew[0,1]
 FNnew = confusionmatrixnew[1,0]
 TNnew = confusionmatrixnew[0,0]
 print("confusion matrix is ",([TPnew,FPnew],[FNnew,TNnew]))
-trainaccuracynew = (TPnew + TNnew)/ (TPnew + TNnew +FNnew + FPnew)
-trainprecisionew = TPnew / (TPnew + FPnew)
-trainsensitivitynew =TPnew/ (TPnew + FNnew)
-trainspecificitynew = TNnew/ (TNnew + FPnew)
+trainaccuracynew,trainprecisionew, trainsensitivitynew, trainspecificitynew = get_train(TPnew, FPnew, TNnew, FNnew)
 print("the accuracy is",trainaccuracynew)
 print("the precision is",trainprecisionew)
 print("the sensitivity is",trainsensitivitynew)
