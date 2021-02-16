@@ -16,10 +16,11 @@ iii. Plot a scatterplot illustrating the correlation between features 3 and 8, c
 b) Preprocessing: sklearn implements several filter type (i.e. not wrapper type) feature selection methods.
 i. Describe the SelectKBest approach using the chi metric. (~50 words, don’t just copy)
 ii. Run a different filter-type feature selection approach on your data (i.e. other than SelectKBest with chi).
-i. Briefly describe which and what parameters you used.
-ii. Summarize the results: how many features were selected and which features selected? If your method simply returns 
-a ranked list of all 215 features, choose a subset by applying an arbitrary cutoff score to the ranked list. Describe 
-your approach.
+iii.
+   i. Briefly describe which and what parameters you used.
+   ii. Summarize the results: how many features were selected and which features selected? If your method simply returns 
+       a ranked list of all 215 features, choose a subset by applying an arbitrary cutoff score to the ranked list. Describe 
+       your approach.
 c) Classification: using a naïve Bayes classifier:
 i. Which parameters must be set by the user (briefly describe their meaning)
 ii. When creating a hold-out test set, what is stratified sampling and how is it applicable here? (~20 words)
@@ -41,13 +42,16 @@ from train import get_train
 from get_accuracy import get_accuracy
 
 # Load the data (note that there is no header line and that the ‘last’ attribute should be considered as the nominal class).
+
 names = []
 for i in range(1,216):
     name = "feature" + str(i)
     names.append(name)
 names.append('classes')
 data = pa.read_csv('assigData4.csv',names = names)
+
 # Plot the distribution of feature 15 for the two classes on a single histogram.
+
 feature15class0 = []
 for j in range(0,7200):
     if data.classes[j] == 0:
@@ -60,17 +64,15 @@ for k in range(0, 7200):
         feature15class1.append(data.feature15[k])
 se.distplot(feature15class1, color = 'red', bins = 50, kde = False, label = "class=1")
 plt.legend()
-#a)iii# we could see from the graph, there is a weak correlation between the two features in each class.
+
+# Plot a scatterplot illustrating the correlation between features 3 and 8, colouring the data by class
+
 plt.figure()
 se.scatterplot(x = "feature3", y = "feature8", data = data,hue='classes')
-#b)i.
-"""chi2 is used to express the correlation between the feature with the class,
-and then we could use selectkBest method to get k features which have good correlation
-with the class"""
-#b)ii
-"""I use the SelectPercentile with f_classif method, which use chi2 , and then choose the features of
-the highest percentile of the scores. the parameter : score_func=<function f_classif>, percentile"""
-#ii
+
+#I use the SelectPercentile with f_classif method, which use chi2 , and then choose the features of
+#the highest percentile of the scores. the parameter : score_func=<function f_classif>, percentile
+
 Y = pa.Series(data.classes).values
 dataupdate = data.drop(columns = 'classes')
 X = dataupdate.values
@@ -104,11 +106,11 @@ print(a)
 'feature180', 'feature182', 'feature184', 'feature185', 'feature194', 'feature196', 'feature197',
 'feature200', 'feature201', 'feature202', 'feature203', 'feature204', 'feature209', 'feature210',
 'feature211', 'feature212', 'feature213', 'feature214', 'feature215'."""
-#c)
-#i
-#ii
-"""we partition the data into training set,validation set and test set"""
-#iii
+
+# For the original feature set (215 features): Conduct a 5-fold cross-validation test. Provide 
+# the confusion matrix, the accuracy, the precision, the sensitivity, and the specificity. 
+# Generate a ROC curve and a precision-recall curve.
+
 dataarray = dataupdate.values
 classarray = data.classes.values
 c = sk.model_selection.StratifiedShuffleSplit(n_splits = 1, test_size = 0.2)
@@ -121,8 +123,6 @@ gnb.fit(X_train, y_train)
 score = gnb.predict_proba(X_train)[:, 1]
 y_pred = sk.model_selection.cross_val_predict(gnb,X_train, y_train, groups = None, cv = 5, verbose = 2)
 confusionmatrix = sk.metrics.confusion_matrix(y_train, y_pred)
-#4621, 179
-# 156, 804
 TP = confusionmatrix[1,1]
 FP = confusionmatrix[0,1]
 FN = confusionmatrix[1,0]
@@ -150,7 +150,11 @@ plt.ylim(0,1)
 plt.xlabel('trainrecall')
 plt.ylabel('trainprecision')
 plt.show()
-#iv
+
+#For the optimal feature set : Conduct a 5-fold cross-validation test. Provide 
+#the confusion matrix, the accuracy, the precision, the sensitivity, and the specificity. 
+#Generate a ROC curve and a precision-recall curve.
+
 dataarraynew=data[a].values
 classarraynew=data.classes.values
 s = sk.model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0.2)
@@ -163,8 +167,6 @@ gnbnew.fit(X_trainnew,y_trainnew)
 scorenew = gnbnew.predict_proba(X_trainnew)[:, 1]
 y_prednew = sk.model_selection.cross_val_predict(gnbnew,X_trainnew, y_trainnew, groups=None, cv=5, verbose=2)
 confusionmatrixnew = sk.metrics.confusion_matrix(y_trainnew, y_prednew)
-#4621, 179
-# 156, 804
 TPnew = confusionmatrixnew[1,1]
 FPnew = confusionmatrixnew[0,1]
 FNnew = confusionmatrixnew[1,0]
@@ -193,6 +195,7 @@ plt.xlabel('trainrecallnew')
 plt.ylabel('trainprecisionnew')
 plt.show()
 
+# get the accuracy of different dataset
 ytrainaccuracy = get_accuracy(gnb, X_train, y_train)
 print("the accuracy on the train set of the original data is",ytrainaccuracy)
 ytrainnewaccuracy = get_accuracy(gnbnew, X_trainnew, y_trainnew)
