@@ -30,20 +30,21 @@ import matplotlib.pyplot as plt
 import sklearn
 from get_method import get_fpr_tpr_precision,get_auc
 
-f=np.loadtxt('assigData3.txt')
-score = f[: , 0]
-trueclass = f[: , 1]
-FPR,TPR,precision = get_fpr_tpr_precision(score,trueclass)
+f = np.loadtxt('assigData3.txt')
+score = f[:, 0]
+trueclass = f[:, 1]
+FPR,TPR,precision = get_fpr_tpr_precision(score, trueclass)
 plt.scatter(FPR, TPR)
 plt.xlim(0, 1) 
 plt.ylim(0, 1)
 plt.xlabel("FPR")
 plt.ylabel("TPR")
 plt.show()
-auc,b = get_auc(FPR,TPR)
+auc, b = get_auc(FPR, TPR)
 print (f"the auc is %{auc}.")
 
-"""ii"""
+# get the maximum specificity
+
 c = []
 for m in range(0, 2000):
     if TPR[b[m]] >= 0.90:
@@ -52,7 +53,8 @@ m = np.min(c)
 specificity = 1 - m
 print(f"the maximum specificity is {specificity}")
 
-"""iii"""
+#Plot a precision-recall curve for the given data.
+
 plt.figure()
 plt.scatter(TPR, precision)
 plt.xlim(0, 1)
@@ -61,18 +63,20 @@ plt.xlabel("recall")
 plt.ylabel("precision")
 plt.show()
 
-"""iv"""
+#get the precision with a sensitivity of 90% (highlight this point on your curve)
+
 for l in range(0, 2000):
     if TPR[b[l]] == 0.9:
         print (precision[b[l]])
 plt.plot(TPR[b[l]], precision[b[l]], 'r*')
 
-"""v"""
+# get the lower bound and upper bound 
+
 precisionv = []
 for f in range(0, 2000):
     if TPR[f] == 0.9:
         precisionv.append(precision[f])
-boot=sklearn.utils.resample(precisionv, replace = True, n_samples = 2000, random_state = 1)
+boot = sklearn.utils.resample(precisionv, replace = True, n_samples = 2000, random_state = 1)
 boot = np.sort(boot)
 lower = boot[50]
 upper = boot[1950]
